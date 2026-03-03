@@ -32,15 +32,18 @@ public:
         m = minutes;
         s = seconds;
     }
-    void timeDifference(const Time& other) const {
-        int h1 = (hours * 3600) + (minutes * 60) + seconds;
-        int h2 = (other.hours) + (other.minutes) + other.seconds;
-        int diff = h1 - h2;
-        if (diff < 0) diff += 24 * 3600;
+    Time timeDifference(const Time& other) const {
+        int total1 = hours * 3600 + minutes * 60 + seconds;
+        int total2 = other.hours * 3600 + other.minutes * 60 + other.seconds;
+
+        int diff = total1 - total2;
+        if (diff < 0) diff += 24 * 3600;  // учитываем переход через полночь
+
         int diff_hours = diff / 3600;
         int diff_minutes = (diff % 3600) / 60;
         int diff_seconds = diff % 60;
-        std::cout << "Разница: " << diff_hours << " часов, " << diff_minutes << " минут, " << diff_seconds << " секунд.";
+
+        return Time(diff_hours, diff_minutes, diff_seconds);
     }
     void timeShift(int s_shift, int m_shift, int h_shift) {
         hours += h_shift;
@@ -57,19 +60,29 @@ public:
 //пример испозьзования
 int main() {
     setlocale(LC_ALL, "Russian");
+
     Time t1(10, 45, 30);
     Time t2(12, 15, 25);
+
     std::cout << "Первое Время: " << std::endl;
     t1.printTime();
     std::cout << "Второе Время: " << std::endl;
     t2.printTime();
-    std::cout << "Разница между первым временем и вторым временем : " << std::endl;
-    t1.timeDifference(t2);
+
+    std::cout << "Разница между первым временем и вторым временем: " << std::endl;
+    Time diff1 = t1.timeDifference(t2);
+    diff1.printTime();
+
     std::cout << "Разница между вторым временем и первым: " << std::endl;
-    t2.timeDifference(t1);
+    Time diff2 = t2.timeDifference(t1);
+    diff2.printTime();
+
     std::cout << "Сдвиг первого времени на (3,10,4): " << std::endl;
     t1.timeShift(3, 10, 4);
+    t1.printTime();
+
     Time t_normalize(22, 59, 60);
     std::cout << "Демонстрация нормализации на (22, 59, 60): " << std::endl;
     t_normalize.printTime();
 }
+
