@@ -15,7 +15,7 @@ public:
             size = 2;
         }
         data = new int* [size];
-        for (int i = 0; i < size; ++i) {
+        for (int i = 0; i < size; i++) {
             data[i] = new int[size] {0};
         }
     }
@@ -23,9 +23,9 @@ public:
     // Копирование
     Matrix(const Matrix& other) : size(other.size) {
         data = new int* [size];
-        for (int i = 0; i < size; ++i) {
+        for (int i = 0; i < size; i++) {
             data[i] = new int[size];
-            for (int j = 0; j < size; ++j) {
+            for (int j = 0; j < size; j++) {
                 data[i][j] = other.data[i][j];
             }
         }
@@ -35,16 +35,16 @@ public:
     Matrix& operator=(const Matrix& other) {
         if (this != &other) {
             // Освобождение старой памяти
-            for (int i = 0; i < size; ++i) {
+            for (int i = 0; i < size; i++) {
                 delete[] data[i];
             }
             delete[] data;
 
             size = other.size;
             data = new int* [size];
-            for (int i = 0; i < size; ++i) {
+            for (int i = 0; i < size; i++) {
                 data[i] = new int[size];
-                for (int j = 0; j < size; ++j) {
+                for (int j = 0; j < size; j++) {
                     data[i][j] = other.data[i][j];
                 }
             }
@@ -54,7 +54,7 @@ public:
 
     // Деструктор
     ~Matrix() {
-        for (int i = 0; i < size; ++i) {
+        for (int i = 0; i < size; i++) {
             delete[] data[i];
         }
         delete[] data;
@@ -66,14 +66,14 @@ public:
             std::cout << "Ошибка: Размер матрицы должен быть от 2 до 8. Размер не изменен.\n";
             return false;
         }
-        for (int i = 0; i < size; ++i) {
+        for (int i = 0; i < size; i++) {
             delete[] data[i];
         }
         delete[] data;
 
         size = n;
         data = new int* [size];
-        for (int i = 0; i < size; ++i) {
+        for (int i = 0; i < size; i++) {
             data[i] = new int[size] {0};
         }
         return true;
@@ -105,9 +105,9 @@ public:
 
     //Диагональное преобладание
     bool Diagonal() const {
-        for (int i = 0; i < size; ++i) {
+        for (int i = 0; i < size; i++) {
             int sumOther = 0;
-            for (int j = 0; j < size; ++j) {
+            for (int j = 0; j < size; j++) {
                 if (i != j) {
                     sumOther += std::abs(data[i][j]);
                 }
@@ -125,8 +125,8 @@ public:
             std::cout << "Ошибка: Матрицы должны быть одного размера.\n";
             return false;
         }
-        for (int i = 0; i < size; ++i) {
-            for (int j = 0; j < size; ++j) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
                 result.data[i][j] = data[i][j] + other.data[i][j];
             }
         }
@@ -135,8 +135,8 @@ public:
 
     //Вывод матрицы на консоль
     void print() const {
-        for (int i = 0; i < size; ++i) {
-            for (int j = 0; j < size; ++j) {
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
                 std::cout << data[i][j] << " ";
             }
             std::cout << std::endl;
