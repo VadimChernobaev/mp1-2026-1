@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <ctime>
+#include <stdexcept>
 
 using namespace std;
 
@@ -36,8 +36,7 @@ struct Session
     string movie;
     int hall;
     double basePrice;
-
-    vector<vector<Seat>> seats;
+    vector<Seat> seats;
 };
 
 class Cinema
@@ -46,7 +45,6 @@ private:
     vector<Session> sessions;
 
 public:
-
     void addSession(Session s)
     {
         sessions.push_back(s);
@@ -56,13 +54,10 @@ public:
     {
         for (auto& s : sessions)
         {
-            if (s.date == date &&
-                s.time == time &&
-                s.movie == movie &&
-                s.hall == hall)
+            if (s.date == date && s.time == time &&
+                s.movie == movie && s.hall == hall)
                 return &s;
         }
-
         return nullptr;
     }
 
@@ -70,13 +65,10 @@ public:
     {
         int freeSeats = 0;
 
-        for (auto& row : session->seats)
+        for (auto& seat : session->seats)
         {
-            for (auto& seat : row)
-            {
-                if (!seat.occupied && seat.zone == zone)
-                    freeSeats++;
-            }
+            if (!seat.occupied && seat.zone == zone)
+                freeSeats++;
         }
 
         return freeSeats >= count;
@@ -86,18 +78,15 @@ public:
     {
         vector<Seat*> result;
 
-        for (auto& row : session->seats)
+        for (auto& seat : session->seats)
         {
-            for (auto& seat : row)
+            if (!seat.occupied && seat.zone == zone)
             {
-                if (!seat.occupied && seat.zone == zone)
-                {
-                    seat.occupied = true;
-                    result.push_back(&seat);
+                seat.occupied = true;
+                result.push_back(&seat);
 
-                    if (result.size() == count)
-                        return result;
-                }
+                if (result.size() == count)
+                    return result;
             }
         }
 
@@ -134,7 +123,6 @@ private:
     Cinema& cinema;
 
 public:
-
     TicketOffice(Cinema& c) : cinema(c) {}
 
     vector<Ticket> buyTickets(
@@ -163,16 +151,14 @@ public:
 
         for (auto s : seats)
         {
-            Ticket t;
-
-            t.date = date;
-            t.time = time;
-            t.movie = movie;
-            t.hall = hall;
-            t.row = s->row;
-            t.seat = s->number;
-
-            tickets.push_back(t);
+            tickets.push_back({
+                date,
+                time,
+                movie,
+                hall,
+                s->row,
+                s->number
+                });
         }
 
         return tickets;
@@ -203,12 +189,9 @@ Session createSession(
 
     for (int r = 0; r < rows; r++)
     {
-        vector<Seat> row;
-
         for (int c = 0; c < seatsPerRow; c++)
         {
             Seat seat;
-
             seat.row = r + 1;
             seat.number = c + 1;
 
@@ -217,68 +200,11 @@ Session createSession(
             else
                 seat.zone = Zone::Regular;
 
-            row.push_back(seat);
+            s.seats.push_back(seat);
         }
-
-        s.seats.push_back(row);
     }
 
     return s;
 }
 
-int main()
-{
-    Cinema cinema;
-
-    cinema.addSession(
-        createSession(
-            "20.04.2026",
-            "19:00",
-            "Project 'Hail Mary' ",
-            1,
-            5,
-            10,
-            10.0
-        )
-    );
-
-    TicketOffice office(cinema);
-
-    try
-    {
-        double price;
-
-        auto tickets =
-            office.buyTickets(
-                "20.04.2026",
-                "19:00",
-                "Project 'Hail Mary' ",
-                1,
-                Zone::Regular,
-                3,
-                price
-            );
-
-        cout << "Total price: " << price << endl;
-
-        cout << "Tickets:" << endl;
-
-        for (auto& t : tickets)
-        {
-            cout
-                << t.movie << " "
-                << t.date << " "
-                << t.time
-                << " hall " << t.hall
-                << " row " << t.row
-                << " seat " << t.seat
-                << endl;
-        }
-    }
-    catch (exception& e)
-    {
-        cout << e.what() << endl;
-    }
-
-    return 0;
-}
+int main() {};
